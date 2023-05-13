@@ -1,13 +1,16 @@
 //Librarie pentru a prelua data curenta din sistem.
 package Persoane;
-import Utilitare.Functii;
-import Utilitare.DataNastere;
-import Utilitare.Locatie;
+import Utilitare.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
 //Clasa de baza
-public abstract class Persoana implements Functii {
+public abstract class Persoana implements Functii, General {
 
     //Date membre
     protected String nume,prenume;
@@ -24,31 +27,41 @@ public abstract class Persoana implements Functii {
     }
 
     //Functie care calculeaza varsta unei persoane.
-    int calculVarsta() {
-        String dataSiOra = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
-        int varsta=Integer.parseInt(dataSiOra.substring(0,4))-dataNastere.getAn();
-        if(Integer.parseInt(dataSiOra.substring(5,7))<dataNastere.getLuna())
-            varsta--;
-        else
-        if(Integer.parseInt(dataSiOra.substring(5,7))==dataNastere.getLuna())
-            if(Integer.parseInt(dataSiOra.substring(8,10))<dataNastere.getZi())
-                varsta--;
-        return varsta;
+
+    protected static int existaInDB(Connection conn, String CNP,String table) throws SQLException {
+        String query = "SELECT COUNT(ID) FROM " + table + " WHERE CNP= " + CNP;
+        ResultSet rs = conn.createStatement().executeQuery(query);
+        rs.next();
+        return rs.getInt(1);
     }
 
-    //Contructori
+    public static void deleteID_DB(String table,int ID) throws SQLException {
+        JDBC dbManager = JDBC.getInstance();
+        Connection conn = dbManager.getConnection();
+        String sql = "delete from " + table + " where id=?;";
+        PreparedStatement st = conn.prepareStatement(sql);
+        st.setInt(1,ID);
+        st.executeUpdate();
+    }
 
-//    public Persoane.Persoana() {
-//    }
+    public static void deleteID_CNP(String table,String CNP) throws SQLException {
+        JDBC dbManager = JDBC.getInstance();
+        Connection conn = dbManager.getConnection();
+        String sql = "delete from " + table + " where CNP=?;";
+        PreparedStatement st = conn.prepareStatement(sql);
+        st.setString(1,CNP);
+        st.executeUpdate();
+    }
+    //Contructori
 
     public Persoana(){
         Scanner sc = new Scanner(System.in);
         System.out.print("\nNume: "); this.nume= sc.nextLine();
         System.out.print("Prenume: "); this.prenume=sc.nextLine();
         System.out.print("Initiala tatalui: "); this.initialaTata=sc.next().charAt(0);
-        System.out.print("Data nasterii: "); this.dataNastere=new DataNastere();
-        this.varsta=calculVarsta();
-        System.out.print("Locatie: "); this.resedinta=new Locatie(); sc.nextLine();
+        System.out.println("Data nasterii: "); this.dataNastere=new DataNastere(sc);
+        this.varsta=General.calculVarsta(this.dataNastere);
+        System.out.print("Locatie: "); this.resedinta=new Locatie(sc); sc.nextLine();
         while(true){
             System.out.print("CNP: "); this.CNP= sc.nextLine();
             if(Functii.validatorCNP(CNP)!=1)
@@ -77,7 +90,7 @@ public abstract class Persoana implements Functii {
             this.CNP=CNP;
         else
             this.CNP="NULL";
-        this.varsta=calculVarsta();
+        this.varsta=General.calculVarsta(this.dataNastere);
         if(validatorNumarTelefon(numarTelefonMobil))
             this.numarTelefonMobil=numarTelefonMobil;
         else
@@ -101,7 +114,7 @@ public abstract class Persoana implements Functii {
         return "\t" + nume + " " + initialaTata + ". " + prenume
                 + "\nData nastere:" + dataNastere.toString()
                 + "CNP: " + CNP + "\nResedinta:\n " + resedinta.toString()
-                + "Varsta: " + varsta + "\nNumar de telefon: " + numarTelefonMobil + ".\n";
+                + "\nVarsta: " + varsta + "\nNumar de telefon: " + numarTelefonMobil + ".\n";
     }
     public static void main(String[] args) {
     }

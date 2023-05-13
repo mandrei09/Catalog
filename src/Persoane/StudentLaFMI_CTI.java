@@ -11,7 +11,6 @@ Persoana(DataNastere,Locatie)
 */
 package Persoane;
 
-import Persoane.StudentLaFMI;
 import Utilitare.DataNastere;
 import Utilitare.Locatie;
 import Utilitare.Materie;
@@ -20,8 +19,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 class StudentLaFMI_CTI extends StudentLaFMI {
-    protected final String specializare = "CTI";
-
+    protected static final String specializare = "CTI";
     public StudentLaFMI_CTI(){
         super();
         Scanner sc = new Scanner(System.in);
@@ -81,7 +79,7 @@ class StudentLaFMI_CTI extends StudentLaFMI {
 
         cursuri=new Materie[anStudiu][21];
         note=new int[anStudiu][21];
-        medii=new double[anStudiu];
+//        medii=new double[anStudiu];
         int numarMaterii;
         for(int i=0;i<anStudiu;i++){
 
@@ -100,7 +98,7 @@ class StudentLaFMI_CTI extends StudentLaFMI {
             if(numarMaterii!=0)
                 System.out.println("Dati materiile din anul" + (i+1));
             for(int j=0;j<numarMaterii;j++){
-                cursuri[i][j]=new Materie();
+                cursuri[i][j]=new Materie(i+1);
 
                 while(true){
                     try{
@@ -129,16 +127,24 @@ class StudentLaFMI_CTI extends StudentLaFMI {
                 }
             }
         }
-        medii[anStudiu-1]=calculMedieAnuala(anStudiu);
+//        medii[anStudiu-1]=calculMedieAnuala(anStudiu);
+
+        intoDB("cti");
+        intoDBCursuri_Note("cti");
+        System.out.println("STUDENTUL A FOST ADAUGAT IN DB!");
+    }
+
+    public static void fromDBCTI(){
+        fromDB("cti");
     }
 
     public StudentLaFMI_CTI(String nume, String prenume, char initialaTata, DataNastere dataNastere,
                             Locatie resedinta, String CNP, String numarTelefonMobil, double medieAdmitere,
-                            boolean olimpic ,int anStudiu, int seria, int grupa, Materie[][] cursuri, int[][] note, double[] medii) {
+                            boolean olimpic ,int anStudiu, int seria, int grupa, Materie[][] cursuri, int[][] note) {
         super(nume, prenume, initialaTata, dataNastere, resedinta, CNP, numarTelefonMobil,medieAdmitere,olimpic,anStudiu);
         this.cursuri=cursuri;
         this.note=note;
-        this.medii=medii;
+//        this.medii=medii;
         this.seria=seria;
         this.grupa=grupa;
     }
@@ -165,6 +171,9 @@ class StudentLaFMI_CTI extends StudentLaFMI {
         }
         else
             return new StringBuilder("\t\n!!!Trebuie furnizata un an intre 1 si 4!!!\n");
+    }
+
+    public static void main(String[] args) {
     }
 }
 

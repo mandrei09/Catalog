@@ -14,12 +14,12 @@ import Utilitare.DataNastere;
 import Utilitare.Locatie;
 import Utilitare.Materie;
 
+import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class StudentLaFMI_Info extends StudentLaFMI {
-    protected final String specializare = "Informatica";
-
+    protected static final String specializare = "Informatica";
     public StudentLaFMI_Info(){
         super();
         Scanner sc = new Scanner(System.in);
@@ -49,6 +49,7 @@ public class StudentLaFMI_Info extends StudentLaFMI {
         final int[][] grupe = {{131,132,133,134,141,142,143,144,151,152,153,154},
                                {231,232,233,234,241,242,243,244,251,252,253,254},
                                {331,332,333,334,341,342,343,344,351,352,353,354}};
+
         final int[] Serii = {grupe[anStudiu-1][0]/10,grupe[anStudiu-1][4]/10,grupe[anStudiu-1][8]/10};
         final String serii = "[" + Serii[0] + "," + Serii[1] + "," + Serii[2] +"]";
 
@@ -73,9 +74,9 @@ public class StudentLaFMI_Info extends StudentLaFMI {
         }
 
         final int startingIndex;
-        if (seria==13)
+        if (seria%10==3)
             startingIndex=0;
-        else if (seria==14) {
+        else if (seria%10==4) {
             startingIndex=4;
         }
         else
@@ -111,7 +112,7 @@ public class StudentLaFMI_Info extends StudentLaFMI {
 
         cursuri=new Materie[anStudiu][21];
         note=new int[anStudiu][21];
-        medii=new double[anStudiu];
+//        medii=new double[anStudiu];
 
         int numarMaterii;
         for(int i=0;i<anStudiu;i++){
@@ -131,7 +132,7 @@ public class StudentLaFMI_Info extends StudentLaFMI {
             if(numarMaterii!=0)
                 System.out.println("Dati materiile din anul " + (i+1));
             for(int j=0;j<numarMaterii;j++){
-                cursuri[i][j]=new Materie();
+                cursuri[i][j]=new Materie(i+1);
 
                 while(true){
                     try{
@@ -162,16 +163,22 @@ public class StudentLaFMI_Info extends StudentLaFMI {
 
             }
         }
-        medii[anStudiu-1]=calculMedieAnuala(anStudiu);
+//        medii[anStudiu-1]=calculMedieAnuala(anStudiu);
+        intoDB("info");
+        intoDBCursuri_Note("info");
+        System.out.println("STUDENTUL A FOST ADAUGAT IN DB!");
+    }
+    public static void fromDBInfo(){
+        fromDB("info");
     }
 
     public StudentLaFMI_Info(String nume, String prenume, char initialaTata, DataNastere dataNastere,
-                        Locatie resedinta, String CNP, String numarTelefonMobil,double medieAdmitere,
-                             boolean olimpic, int anStudiu,int seria,int grupa,Materie[][] cursuri, int[][] note,double[] medii) {
+                         Locatie resedinta, String CNP, String numarTelefonMobil,double medieAdmitere,
+                         boolean olimpic, int anStudiu,int seria,int grupa,Materie[][] cursuri, int[][] note) {
         super(nume, prenume, initialaTata, dataNastere, resedinta, CNP, numarTelefonMobil,medieAdmitere,olimpic,anStudiu);
         this.cursuri=cursuri;
         this.note=note;
-        this.medii=medii;
+//        this.medii=medii;
         this.seria=seria;
         this.grupa=grupa;
     }

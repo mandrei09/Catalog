@@ -18,7 +18,10 @@ Clasa generica, un catalog este o grupare de mai multe persoane de acelasi fel
 package Persoane;
 
 import Persoane.*;
+import Utilitare.DBFunctii;
+import Utilitare.JDBC;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class Catalog<Tip> {
@@ -26,8 +29,10 @@ public class Catalog<Tip> {
 //    private int clasa;
     private int numarPersoane;
 
+    private List<Integer> DBIndex = new ArrayList();
+
     //Constructori
-    Catalog(Class<Tip> tipClasa){
+    public Catalog(Class<Tip> tipClasa){
         Scanner sc = new Scanner(System.in);
 
         while (true) {
@@ -140,7 +145,27 @@ public class Catalog<Tip> {
 //                else
 //                    if(obiectCurent instanceof StudentLaFMI)
 //                        ((StudentLaFMI) obiectCurent).setAnStudiu(this.clasa);
+            String table="";
+            if (obiectCurent instanceof ElevScoalaGenerala)
+                table="esg";
+            else
+                if(obiectCurent instanceof ElevLiceu)
+                    table="el";
+                else
+                    if(obiectCurent instanceof StudentLaFMI_Info)
+                        table="info";
+                    else
+                        if(obiectCurent instanceof StudentLaFMI_Matematica)
+                            table="matematica";
+                        else
+                            if(obiectCurent instanceof StudentLaFMI_CTI)
+                                table="cti";
 
+            try {
+                DBIndex.add(DBFunctii.returnCNP(JDBC.getInstance().getConnection(),((Persoana)obiectCurent).getCNP(),table));
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             lista.put(((Persoana) obiectCurent).getCNP(),obiectCurent);
         }
     }
@@ -148,6 +173,35 @@ public class Catalog<Tip> {
     public Catalog(Map<String,Tip> lista) {
         this.lista = lista;
         this.numarPersoane = lista.size();
+
+        Iterator<Map.Entry<String, Tip>> iterator = lista.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Tip> entry = iterator.next();
+
+            Tip value = entry.getValue();
+
+            String table="";
+            if (value instanceof ElevScoalaGenerala)
+                table="esg";
+                else
+                    if(value instanceof ElevLiceu)
+                        table="el";
+                    else
+                        if(value instanceof StudentLaFMI_Info)
+                            table="info";
+                        else
+                            if(value instanceof StudentLaFMI_Matematica)
+                                table="matematica";
+                            else
+                                if(value instanceof StudentLaFMI_CTI)
+                                    table="cti";
+
+            try {
+                DBIndex.add(DBFunctii.returnCNP(JDBC.getInstance().getConnection(),((Persoana)value).getCNP(),table));
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
 //        this.clasa = clasa;
     }
 
@@ -161,6 +215,8 @@ public class Catalog<Tip> {
         return numarPersoane;
     }
 
+    public List<Integer> getDBIndex(){return DBIndex;}
+
     //Functie care elimina o persoana din catalogul curent.
     public void eliminarePersoana(String CNP){
         if(!lista.containsKey(CNP))
@@ -169,6 +225,9 @@ public class Catalog<Tip> {
             lista.remove(CNP);
     }
 
+
+
     public static void main(String[] args) {
+//        Catalog<ElevScoalaGenerala> c = new Catalog<ElevScoalaGenerala>(ElevScoalaGenerala.class);
     }
 }

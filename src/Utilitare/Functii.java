@@ -1,5 +1,10 @@
 package Utilitare;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+
 //Interfata pentru afisarea unor date specifice atat elevilor, cat si studentilor.
 public interface Functii {
     StringBuilder listaMaterii(int clasa); //lista care se va furniza
@@ -64,4 +69,5 @@ public interface Functii {
         }
         return 1;
     }
+
 }

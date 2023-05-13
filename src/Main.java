@@ -14,12 +14,12 @@ Clasa din care se fac apelurile sistemului
 
 */
 
+import java.sql.SQLOutput;
 import java.util.*;
 import Persoane.*;
 import Utilitare.*;
 
 abstract public class Main implements Functii{
-
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
@@ -30,6 +30,7 @@ abstract public class Main implements Functii{
         while(ok){
             System.out.println("-------------------------------------");
             System.out.println("VA ROG SELECTATI OPTIUNEA DIN MENIUL DE MAI JOS PRIN INTRODUCEREA NUMARULUI CORESPUNZATOR IN CONSOLA:");
+            System.out.println("PROIECT CATALOG V1:");
             System.out.println("\t0.  Crearea unor cataloage predefinite pentru testarea functiilor de sistem.");
             System.out.println("\t1.  Crearea unui nou catalog cu date citite de la tastatura.");
             System.out.println("\t2.  Afisarea datelor dintr-un anumit catalog.");
@@ -41,7 +42,11 @@ abstract public class Main implements Functii{
             System.out.println("\t8.  Afisarea listei cursurilor unei persoane.");
             System.out.println("\t9.  Sortarea cataloagelor crescator / descrescator dupa numarul de persoane.");
             System.out.println("\t10. Afisarea tuturor studentilor restanti.");
-            System.out.println("\t11. Parasirea aplicatiei.");
+            System.out.println("PROIECT CATALOG V2");
+            System.out.println("\t11. Afisarea datelor din DB ale unui elev/student dupa CNP.");
+            System.out.println("\t12. Actualizarea datelor din DB ale unui elev/student dupa CNP.");
+            System.out.println("\t13. Eliminarea unui elev/student din DB dupa CNP.");
+            System.out.println("\t14. Parasirea aplicatiei.");
             System.out.println("-------------------------------------");
 
             while(true){
@@ -122,7 +127,7 @@ abstract public class Main implements Functii{
 
                             while(true){
                                 try{
-                                    System.out.println("Va rog introduceti un numar de la 0 la " + (service.getCataloageLength()-1) + ": ");
+                                    System.out.print("Va rog introduceti un numar de la 0 la " + (service.getCataloageLength()-1) + ": ");
                                     op = sc.nextInt();
                                     break;
                                 }
@@ -221,7 +226,7 @@ abstract public class Main implements Functii{
                         String CNP;
                         System.out.println("\tAti selectat : Afisarea carnetului pentru un anumit elev.");
                         while(true){
-                            System.out.print("Va rog introduceti CNP-ul persoanei pe care doriti sa o stergeti din catalog: ");
+                            System.out.print("Va rog introduceti clasa persoanei pentru care faceti solicitarea: ");
                             sc.nextLine(); CNP = sc.nextLine();
                             if(Functii.validatorCNP(CNP)==1){
                                 service.afisareCarnetElev(CNP);
@@ -311,6 +316,21 @@ abstract public class Main implements Functii{
                 }
 
                 case 11 ->
+                {
+                    service.mainFromDB();
+                }
+
+                case 12 ->
+                {
+                    service.mainUpdateDB();
+                }
+
+                case 13 ->
+                {
+                    service.mainDeleteDB();
+                }
+
+                case 14 ->
                 {
                     System.out.println("\nMultumesc pentru ca mi-ati folosit programul, o zi buna! :)");
                     ok=false;

@@ -20,8 +20,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 class StudentLaFMI_Matematica extends StudentLaFMI {
-    protected final String specializare = "Matematica";
-
+    protected static final String specializare = "Matematica";
     public StudentLaFMI_Matematica(){
         super();
         Scanner sc = new Scanner(System.in);
@@ -81,7 +80,7 @@ class StudentLaFMI_Matematica extends StudentLaFMI {
 
         cursuri=new Materie[anStudiu][21];
         note=new int[anStudiu][21];
-        medii=new double[anStudiu];
+//        medii=new double[anStudiu];
         int numarMaterii;
         for(int i=0;i<anStudiu;i++){
 
@@ -100,7 +99,7 @@ class StudentLaFMI_Matematica extends StudentLaFMI {
             if(numarMaterii!=0)
                 System.out.println("Dati materiile din anul " + (i+1));
             for(int j=0;j<numarMaterii;j++){
-                cursuri[i][j]=new Materie();
+                cursuri[i][j]=new Materie(i+1);
 
                 while(true){
                     try{
@@ -130,17 +129,24 @@ class StudentLaFMI_Matematica extends StudentLaFMI {
 
             }
         }
-        medii[anStudiu-1]=calculMedieAnuala(anStudiu);
+//        medii[anStudiu-1]=calculMedieAnuala(anStudiu);
+        intoDB("matematica");
+        intoDBCursuri_Note("matematica");
+        System.out.println("STUDENTUL A FOST ADAUGAT IN DB!");
+    }
+
+    public static void fromDBMatematica(){
+        fromDB("matematica");
     }
 
     public StudentLaFMI_Matematica(String nume, String prenume, char initialaTata, DataNastere dataNastere,
-                                   Locatie resedinta, String CNP, String numarTelefonMobil, double medieAdmitere,
-                                   boolean olimpic, int anStudiu, int grupa, Materie[][] cursuri, int[][] note, double[] medii) {
+                             Locatie resedinta, String CNP, String numarTelefonMobil,double medieAdmitere,
+                             boolean olimpic, int anStudiu,int seria,int grupa,Materie[][] cursuri, int[][] note) {
         super(nume, prenume, initialaTata, dataNastere, resedinta, CNP, numarTelefonMobil,medieAdmitere,olimpic,anStudiu);
         this.cursuri=cursuri;
         this.note=note;
-        this.medii=medii;
-        this.seria=anStudiu*10;
+//        this.medii=medii;
+        this.seria=seria;
         this.grupa=grupa;
     }
 
